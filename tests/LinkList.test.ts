@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test } from 'vitest'
-import { LinkList } from './LinkList'
+import { LinkList } from '../src/LinkList/LinkList'
 
 describe('LinkList', () => {
   let linkList: LinkList<number>
