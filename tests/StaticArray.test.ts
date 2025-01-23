@@ -159,4 +159,13 @@ describe('StaticArray', () => {
 
     expect(arr.filter((item) => item > 5).length).toBe(0)
   })
+
+  test('Should return a new reduced array from origin array', () => {
+    const originList = [1, 2, 3, 4, 5]
+    arr.push(...originList)
+    const res = originList.reduce((pre, curr) => pre + curr)
+    console.log('🤔 ~ test ~ res:', res)
+
+    expect(arr.reduce((pre, curr) => pre + curr)).toBe(res)
+  })
 })

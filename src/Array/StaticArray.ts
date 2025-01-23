@@ -1,3 +1,5 @@
+// TODO: reduce,iterate feature
+
 export class StaticArray<T> {
   public length: number
   private capacity: number
@@ -142,5 +144,31 @@ export class StaticArray<T> {
     }
 
     return newStaticArray
+  }
+
+  reduce<U extends T>(
+    ...args: [
+      (
+        previousValue: U,
+        currentValue: T,
+        currentIndex: number,
+        array: this,
+      ) => U,
+      initialValue?: U,
+    ]
+  ): U | undefined {
+    if (!this.length && args.length < 2)
+      throw new TypeError('Reduce of empty StaticArray with no initial value')
+    const reducedArr = new StaticArray<U>(this.capacity)
+    const [callback] = args
+    const hasInitValue = args.length >= 2
+    let initialValue = hasInitValue ? args[1] : (this.get(0) as U)
+
+    for (let i = hasInitValue ? 1 : 0; i < this.length; i++) {
+      initialValue = callback(initialValue as U, this.get(i) as T, i, this)
+      // reducedArr.push(callback(initialValue as U, this.get(i) as T, i, this))
+    }
+
+    return initialValue
   }
 }
