@@ -8,12 +8,12 @@ describe('LinkList', () => {
     linkList = new LinkList<number>()
   })
 
-  test('should return null when index is out of bounds', () => {
+  test('Should return null when index is out of bounds', () => {
     expect(linkList.remove(-1)).toBeNull()
     expect(linkList.remove(100)).toBeNull()
   })
 
-  test('should remove the first node', () => {
+  test('Should remove the first node', () => {
     linkList.push(1)
     linkList.push(2)
     linkList.push(3)
@@ -24,7 +24,7 @@ describe('LinkList', () => {
     expect(linkList.length).toEqual(2)
   })
 
-  test('should remove the middle node', () => {
+  test('Should remove the middle node', () => {
     linkList.push(1)
     linkList.push(2)
     linkList.push(3)
@@ -35,7 +35,7 @@ describe('LinkList', () => {
     expect(linkList.length).toEqual(2)
   })
 
-  test('should remove the last node', () => {
+  test('Should remove the last node', () => {
     linkList.push(1)
     linkList.push(2)
     linkList.push(3)

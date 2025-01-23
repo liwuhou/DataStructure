@@ -22,10 +22,31 @@ export class StaticArray<T> {
     this.list[index] = value
   }
 
-  push(value: T): number {
+  clone(deep = false): StaticArray<T> {
+    const newStaticArray = new StaticArray<T>(this.capacity)
+
+    for (let i = 0; i < this.length; i++) {
+      const newValue = deep
+        ? structuredClone(this.get(i) as T)
+        : (this.get(i) as T)
+      newStaticArray.set(i, newValue)
+    }
+
+    return newStaticArray
+  }
+
+  clear() {
+    this.length = 0
+    this.list = new Array<T>()
+  }
+
+  push(...values: T[]): number {
     if (this.length >= this.capacity) return this.length
-    this.list[this.length] = value
-    return ++this.length
+    for (const value of values) {
+      this.list[this.length++] = value
+      if (this.length === this.capacity) break
+    }
+    return this.length
   }
 
   pop(): T | undefined {
@@ -36,14 +57,19 @@ export class StaticArray<T> {
     return deleteItem
   }
 
-  unshift(value: T): number {
+  unshift(...values: T[]): number {
     if (this.length >= this.capacity) return this.length
-    for (let i = this.length - 1; i >= 0; i--) {
-      this.list[i + 1] = this.list[i]
-    }
-    this.list[0] = value
+    for (const value of values) {
+      for (let i = this.length - 1; i >= 0; i--) {
+        this.list[i + 1] = this.list[i]
+      }
+      this.list[0] = value
+      this.length++
 
-    return ++this.length
+      if (this.length === this.capacity) break
+    }
+
+    return this.length
   }
 
   shift(): T | undefined {
@@ -75,40 +101,44 @@ export class StaticArray<T> {
     return -1
   }
 
-  find(callback: (item: T) => boolean): number | undefined {
+  find(callback: (item: T) => boolean): T | undefined {
     if (!this.length) return
 
     for (let i = 0; i < this.length; i++) {
-      if (this.list[i] === callback(this.list[i])) return i
+      if (callback(this.list[i])) return this.list[i]
     }
   }
 
-  findLast(callback: (item: T) => boolean): number | undefined {
+  findLast(callback: (item: T) => boolean): T | undefined {
     if (!this.length) return
 
     for (let i = this.length - 1; i >= 0; i--) {
-      if (this.list[i] === callback(this.list[i])) return i
+      if (callback(this.list[i])) return this.list[i]
     }
   }
 
-  map(callback: (item: T) => StaticArray<unknown>) {
-    const newStaticArray = new StaticArray<unknown>(this.capacity)
+  map<U = T>(callback: (item: T, index: number, arr: this) => U) {
+    Array.prototype.map
+    const newStaticArray = new StaticArray<U>(this.capacity)
     for (let i = 0; i < this.length; i++) {
-      newStaticArray.set(i, callback(this.get(i) as T))
+      newStaticArray.set(i, callback(this.get(i) as T, i, this) as U)
     }
     return newStaticArray
   }
 
-  forEach(callback: (item: T) => void) {
+  forEach(callback: (item: T, index: number, arr: this) => void) {
     for (let i = 0; i < this.length; i++) {
-      callback(this.list[i])
+      callback(this.list[i], i, this)
     }
   }
 
-  filter(callback: (item: T) => boolean): StaticArray<T> {
-    const newStaticArray = new StaticArray<T>(this.capacity)
+  filter<S extends T>(
+    callback: (value: T, index: number, arr: this) => unknown,
+  ): StaticArray<S> {
+    const newStaticArray = new StaticArray<S>(this.capacity)
     for (let i = 0; i < this.length; i++) {
-      if (callback(this.list[i])) newStaticArray.push(this.list[i])
+      if (callback(this.list[i], i, this))
+        newStaticArray.push(this.list[i] as S)
     }
 
     return newStaticArray

@@ -6,8 +6,9 @@
 # Dist
 node_modules
 dist/
+coverage/
 
 # IDE
-.vscode/*
+!.vscode/settings.json
 !.vscode/extensions.json
 .idea

@@ -1,5 +1,9 @@
 {
   "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
     "lib": ["ES2021"],
     "module": "ESNext",
     "noEmit": true,
@@ -13,7 +17,7 @@
   },
   "include": [
     "src",
-    "src/StaticArray/StaticArray.ts",
+    "src/Array/StaticArray.ts",
     "tests/StaticArray.test.ts",
     "tests/LinkList.test.ts",
     "tests/LinkList.test.ts"
