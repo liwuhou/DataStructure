@@ -164,8 +164,46 @@ describe('StaticArray', () => {
     const originList = [1, 2, 3, 4, 5]
     arr.push(...originList)
     const res = originList.reduce((pre, curr) => pre + curr)
-    console.log('🤔 ~ test ~ res:', res)
+    const res1 = originList.reduce((pre, curr) => {
+      pre.push(String(curr))
+      return pre
+    }, new Array<string>())
 
     expect(arr.reduce((pre, curr) => pre + curr)).toBe(res)
+    expect(arr.reduce((pre, curr) => pre + curr, 0)).toBe(res)
+    expect(
+      arr.reduce((pre: StaticArray<number>, curr: number) => {
+        if (curr % 2 === 0) {
+          pre.push(curr + 1)
+        }
+        return pre
+      }, new StaticArray<number>(MAX_CAPACITY)),
+    ).toEqual(
+      arr
+        .clone()
+        .filter((item) => item % 2 === 0)
+        .map((item) => item + 1),
+    )
+    arr.clear()
+    expect(arr.reduce(() => 1)).toThrowError(TypeError)
+  })
+
+  test('Should concat other array correctly', () => {
+    arr.push(0, 1)
+    expect([...arr.concat([2, 3, 4])]).toEqual([0, 1, 2, 3, 4])
+  })
+
+  test('Should iterate the array', () => {
+    const originList = [0, 1, 2, 3, 4, 5]
+    arr.push(...originList)
+
+    for (let i = 0; i < arr.length; i++) {}
+
+    let idx = 0
+    for (const item of arr) {
+      expect(item).toBe(originList[idx++])
+    }
+
+    expect([...arr]).toEqual(originList)
   })
 })

@@ -5,6 +5,7 @@
       "@/*": ["./src/*"]
     },
     "lib": ["ES2021"],
+    "target": "ES2015",
     "module": "ESNext",
     "noEmit": true,
     "strict": true,
