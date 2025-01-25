@@ -1,3 +1,5 @@
+// TODO: sort
+
 export class StaticArray<T> {
   public length: number
   private capacity: number
@@ -188,6 +190,13 @@ export class StaticArray<T> {
       item && newList.push(item)
     }
     return newList
+  }
+
+  includes(item: T): boolean {
+    for (const element of this) {
+      if (Object.is(item, element)) return true
+    }
+    return false
   }
 
   [Symbol.iterator]() {

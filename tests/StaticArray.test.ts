@@ -193,6 +193,15 @@ describe('StaticArray', () => {
     expect([...arr.concat([2, 3, 4])]).toEqual([0, 1, 2, 3, 4])
   })
 
+  test('Should return true when item is in the array', () => {
+    arr.push(2)
+    expect(arr.includes(2)).toBeTruthy()
+  })
+
+  test('Should return false when item is not in the array', () => {
+    expect(arr.includes(2)).toBeFalsy()
+  })
+
   test('Should iterate the array', () => {
     const originList = [0, 1, 2, 3, 4, 5]
     arr.push(...originList)
