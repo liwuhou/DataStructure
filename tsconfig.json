@@ -16,11 +16,5 @@
     "useDefineForClassFields": true,
     "allowImportingTsExtensions": true
   },
-  "include": [
-    "src",
-    "src/Array/StaticArray.ts",
-    "tests/StaticArray.test.ts",
-    "tests/LinkList.test.ts",
-    "tests/LinkList.test.ts"
-  ]
+  "include": ["src", "tests"]
 }

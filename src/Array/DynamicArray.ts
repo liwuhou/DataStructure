@@ -1,32 +1,44 @@
-// TODO: sort
+import { StaticArray } from './StaticArray'
 
-export class StaticArray<T> {
-  public length: number
+const INITIAL_CAPACITY = 10
+
+export class DynamicArray<T> {
+  private list: StaticArray<T>
   private capacity: number
-  private list: Array<T>
 
-  constructor(capacity: number) {
-    this.length = 0
-    this.capacity = capacity
-    this.list = new Array<T>(this.capacity)
+  constructor() {
+    this.capacity = INITIAL_CAPACITY
+    this.list = new StaticArray<T>(INITIAL_CAPACITY)
   }
 
-  private checkIndexValid(index: number): boolean {
-    return index >= 0 && index <= this.capacity - 1
+  get length() {
+    return this.list.length
+  }
+
+  private makeSureCapacity(willInsertItemsCount = 1) {
+    if (this.length + willInsertItemsCount >= this.capacity / 2) {
+      // need enlarger array's capacity
+      const originList = this.list
+      this.capacity = this.capacity * 2 + willInsertItemsCount
+      this.list = new StaticArray<T>(this.capacity)
+
+      for (let i = 0; i < originList.length; i++) {
+        this.list.set(i, originList.get(i) as T)
+      }
+    }
   }
 
   get(index: number): T | undefined {
-    return this.list?.[index]
+    return this.list.get(index)
   }
 
   set(index: number, value: T) {
-    if (!this.checkIndexValid(index)) return
-    if (!this.list[index]) this.length++
-    this.list[index] = value
+    this.makeSureCapacity()
+    this.list.set(index, value)
   }
 
-  clone(deep = false): StaticArray<T> {
-    const newStaticArray = new StaticArray<T>(this.capacity)
+  clone(deep = false): DynamicArray<T> {
+    const newStaticArray = new DynamicArray<T>()
 
     for (let i = 0; i < this.length; i++) {
       const newValue = deep
@@ -39,89 +51,62 @@ export class StaticArray<T> {
   }
 
   clear() {
-    this.length = 0
-    this.list = new Array<T>()
+    this.capacity = INITIAL_CAPACITY
+    this.list = new StaticArray<T>(this.capacity)
   }
 
   push(...values: T[]): number {
-    if (this.length >= this.capacity) return this.length
+    // this.makeSureCapacity(values.length)
+
+    // return this.list.push(...values)
     for (const value of values) {
-      this.list[this.length++] = value
-      if (this.length === this.capacity) break
+      this.makeSureCapacity()
+      this.list.set(this.length, value)
     }
     return this.length
   }
 
   pop(): T | undefined {
-    if (!this.length) return
-    const deleteItem = this.list[this.length - 1]
-    delete this.list[--this.length]
-
-    return deleteItem
+    return this.list.pop()
   }
 
   unshift(...values: T[]): number {
-    if (this.length >= this.capacity) return this.length
-    for (const value of values) {
-      for (let i = this.length - 1; i >= 0; i--) {
-        this.list[i + 1] = this.list[i]
+    // FIXME:
+    this.makeSureCapacity(values.length)
+    if (this.length !== 0) {
+      for (let i = this.length + values.length - 1; i >= 0; i--) {
+        this.list.set(i + values.length, this.list.get(i) as T)
       }
-      this.list[0] = value
-      this.length++
-
-      if (this.length === this.capacity) break
+    }
+    for (let i = 0; i < values.length; i++) {
+      this.list.set(i, values[i])
     }
 
     return this.length
   }
 
   shift(): T | undefined {
-    if (!this.length) return
-    const firstItem = this.list[0]
-    for (let i = 0; i < this.length; i++) {
-      this.list[i] = this.list[i + 1]
-    }
-    this.length--
-
-    return firstItem
+    return this.list.shift()
   }
 
   indexOf(value: T): number {
-    if (!this.length) return -1
-
-    for (let i = 0; i < this.length; i++) {
-      if (this.list[i] === value) return i
-    }
-    return -1
+    return this.list.indexOf(value)
   }
 
   lastIndexOf(value: T): number {
-    if (!this.length) return -1
-
-    for (let i = this.length - 1; i >= 0; i--) {
-      if (this.list[i] === value) return i
-    }
-    return -1
+    return this.list.lastIndexOf(value)
   }
 
   find(callback: (item: T) => boolean): T | undefined {
-    if (!this.length) return
-
-    for (let i = 0; i < this.length; i++) {
-      if (callback(this.list[i])) return this.list[i]
-    }
+    return this.list.find(callback)
   }
 
   findLast(callback: (item: T) => boolean): T | undefined {
-    if (!this.length) return
-
-    for (let i = this.length - 1; i >= 0; i--) {
-      if (callback(this.list[i])) return this.list[i]
-    }
+    return this.list.findLast(callback)
   }
 
   map<U = T>(callback: (item: T, index: number, arr: this) => U) {
-    const newStaticArray = new StaticArray<U>(this.capacity)
+    const newStaticArray = new DynamicArray<U>()
     for (let i = 0; i < this.length; i++) {
       newStaticArray.set(i, callback(this.get(i) as T, i, this) as U)
     }
@@ -130,17 +115,17 @@ export class StaticArray<T> {
 
   forEach(callback: (item: T, index: number, arr: this) => void) {
     for (let i = 0; i < this.length; i++) {
-      callback(this.list[i], i, this)
+      callback(this.list.get(i) as T, i, this)
     }
   }
 
   filter<S extends T>(
     callback: (value: T, index: number, arr: this) => unknown,
-  ): StaticArray<S> {
-    const newStaticArray = new StaticArray<S>(this.capacity)
+  ): DynamicArray<S> {
+    const newStaticArray = new DynamicArray<S>()
     for (let i = 0; i < this.length; i++) {
-      if (callback(this.list[i], i, this))
-        newStaticArray.push(this.list[i] as S)
+      if (callback(this.list.get(i) as T, i, this))
+        newStaticArray.push(this.list.get(i) as S)
     }
 
     return newStaticArray
@@ -184,7 +169,9 @@ export class StaticArray<T> {
     return _initialValue
   }
 
-  concat(otherList: StaticArray<T> | Array<T>): StaticArray<T> {
+  concat(
+    otherList: StaticArray<T> | DynamicArray<T> | Array<T>,
+  ): DynamicArray<T> {
     const newList = this.clone()
     for (const item of otherList) {
       item && newList.push(item)
