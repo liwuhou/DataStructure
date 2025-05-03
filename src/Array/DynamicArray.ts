@@ -41,9 +41,7 @@ export class DynamicArray<T> {
     const newStaticArray = new DynamicArray<T>()
 
     for (let i = 0; i < this.length; i++) {
-      const newValue = deep
-        ? structuredClone(this.get(i) as T)
-        : (this.get(i) as T)
+      const newValue = deep ? structuredClone(this.get(i) as T) : (this.get(i) as T)
       newStaticArray.set(i, newValue)
     }
 
@@ -74,7 +72,7 @@ export class DynamicArray<T> {
     // FIXME:
     this.makeSureCapacity(values.length)
     if (this.length !== 0) {
-      for (let i = this.length + values.length - 1; i >= 0; i--) {
+      for (let i = this.length - 1; i >= 0; i--) {
         this.list.set(i + values.length, this.list.get(i) as T)
       }
     }
@@ -119,47 +117,26 @@ export class DynamicArray<T> {
     }
   }
 
-  filter<S extends T>(
-    callback: (value: T, index: number, arr: this) => unknown,
-  ): DynamicArray<S> {
+  filter<S extends T>(callback: (value: T, index: number, arr: this) => unknown): DynamicArray<S> {
     const newStaticArray = new DynamicArray<S>()
     for (let i = 0; i < this.length; i++) {
-      if (callback(this.list.get(i) as T, i, this))
-        newStaticArray.push(this.list.get(i) as S)
+      if (callback(this.list.get(i) as T, i, this)) newStaticArray.push(this.list.get(i) as S)
     }
 
     return newStaticArray
   }
 
+  reduce<U = T>(callback: (previousValud: U, currentValue: T, currentIndex: number, array: this) => U): U
   reduce<U = T>(
-    callback: (
-      previousValud: U,
-      currentValue: T,
-      currentIndex: number,
-      array: this,
-    ) => U,
-  ): U
-  reduce<U = T>(
-    callback: (
-      previousValud: U,
-      currentValue: T,
-      currentIndex: number,
-      array: this,
-    ) => U,
-    initialValue: U,
+    callback: (previousValud: U, currentValue: T, currentIndex: number, array: this) => U,
+    initialValue: U
   ): U
   reduce<U>(
-    callback: (
-      previousValue: U,
-      currentValue: T,
-      currentIndex: number,
-      array: this,
-    ) => U,
-    initialValue?: U,
+    callback: (previousValue: U, currentValue: T, currentIndex: number, array: this) => U,
+    initialValue?: U
   ): U | TypeError {
     const hasInitValue = typeof initialValue !== 'undefined'
-    if (!this.length && !hasInitValue)
-      return new TypeError('Reduce of empty StaticArray with no initial value')
+    if (!this.length && !hasInitValue) return new TypeError('Reduce of empty StaticArray with no initial value')
     let _initialValue = hasInitValue ? initialValue : (this.get(0) as U)
 
     for (let i = hasInitValue ? 0 : 1; i < this.length; i++) {
@@ -169,9 +146,7 @@ export class DynamicArray<T> {
     return _initialValue
   }
 
-  concat(
-    otherList: StaticArray<T> | DynamicArray<T> | Array<T>,
-  ): DynamicArray<T> {
+  concat(otherList: StaticArray<T> | DynamicArray<T> | Array<T>): DynamicArray<T> {
     const newList = this.clone()
     for (const item of otherList) {
       item && newList.push(item)

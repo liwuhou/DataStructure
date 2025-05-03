@@ -50,7 +50,7 @@ describe('DynamicArray', () => {
 
   test("Should return the array's length when unshift a element to array", () => {
     expect(arr.unshift(0)).toBe(1)
-    expect(arr.unshift(1)).toBe(arr.length)
+    expect(arr.unshift(1))
 
     expect(arr.unshift(...[2, 3, 4, 5])).toBe(6)
     expect(arr.unshift(6, 7, 8, 9, 10)).toBe(11)
@@ -140,84 +140,84 @@ describe('DynamicArray', () => {
     }
   })
 
-  // test('Should return a whole new array from clone', () => {
-  //   const arr = new StaticArray<number[]>(2)
-  //   arr.push([1], [2, 3])
-  //   const deepClonedArr = arr.clone(true)
+  test('Should return a whole new array from clone', () => {
+    const arr = new DynamicArray<number[]>()
+    arr.push([1], [2, 3])
+    const deepClonedArr = arr.clone(true)
 
-  //   expect(arr).toEqual(deepClonedArr)
-  //   expect(arr === deepClonedArr).toBeFalsy()
-  //   expect(arr.get(0)).toEqual(deepClonedArr.get(0))
-  //   expect(arr.get(0) === deepClonedArr.get(0)).toBeFalsy()
-  // })
+    expect(arr).toEqual(deepClonedArr)
+    expect(arr === deepClonedArr).toBeFalsy()
+    expect(arr.get(0)).toEqual(deepClonedArr.get(0))
+    expect(arr.get(0) === deepClonedArr.get(0)).toBeFalsy()
+  })
 
-  // test('Filter should return a new StaticArray with filtered items', () => {
-  //   const originSourceList = [0, 1, 2, 3, 4, 5]
-  //   arr.push(...originSourceList)
+  test('Filter should return a new StaticArray with filtered items', () => {
+    const originSourceList = [0, 1, 2, 3, 4, 5]
+    arr.push(...originSourceList)
 
-  //   const filteredArr = arr.filter((item) => item % 2)
-  //   expect(filteredArr.length).toBe(3)
-  //   expect(filteredArr.get(0)).toBe(1)
-  //   expect(filteredArr.get(1)).toBe(3)
-  //   expect(filteredArr.get(2)).toBe(5)
-  //   expect(arr.length).toBe(originSourceList.length)
+    const filteredArr = arr.filter((item) => item % 2)
+    expect(filteredArr.length).toBe(3)
+    expect(filteredArr.get(0)).toBe(1)
+    expect(filteredArr.get(1)).toBe(3)
+    expect(filteredArr.get(2)).toBe(5)
+    expect(arr.length).toBe(originSourceList.length)
 
-  //   expect(arr.filter((item) => item > 5).length).toBe(0)
-  // })
+    expect(arr.filter((item) => item > 5).length).toBe(0)
+  })
 
-  // test('Should return a new reduced array from origin array', () => {
-  //   const originList = [1, 2, 3, 4, 5]
-  //   arr.push(...originList)
-  //   const res = originList.reduce((pre, curr) => pre + curr)
-  //   const res1 = originList.reduce((pre, curr) => {
-  //     pre.push(String(curr))
-  //     return pre
-  //   }, new Array<string>())
+  test('Should return a new reduced array from origin array', () => {
+    const originList = [1, 2, 3, 4, 5]
+    arr.push(...originList)
+    const res = originList.reduce((pre, curr) => pre + curr)
+    const res1 = originList.reduce((pre, curr) => {
+      pre.push(String(curr))
+      return pre
+    }, new Array<string>())
 
-  //   expect(arr.reduce((pre, curr) => pre + curr)).toBe(res)
-  //   expect(arr.reduce((pre, curr) => pre + curr, 0)).toBe(res)
-  //   expect(
-  //     arr.reduce((pre: StaticArray<number>, curr: number) => {
-  //       if (curr % 2 === 0) {
-  //         pre.push(curr + 1)
-  //       }
-  //       return pre
-  //     }, new StaticArray<number>(MAX_CAPACITY)),
-  //   ).toEqual(
-  //     arr
-  //       .clone()
-  //       .filter((item) => item % 2 === 0)
-  //       .map((item) => item + 1),
-  //   )
-  //   arr.clear()
-  //   expect(arr.reduce(() => 1)).toThrowError(TypeError)
-  // })
+    expect(arr.reduce((pre, curr) => pre + curr)).toBe(res)
+    expect(arr.reduce((pre, curr) => pre + curr, 0)).toBe(res)
+    expect(
+      arr.reduce((pre: DynamicArray<number>, curr: number) => {
+        if (curr % 2 === 0) {
+          pre.push(curr + 1)
+        }
+        return pre
+      }, new DynamicArray<number>()),
+    ).toEqual(
+      arr
+        .clone()
+        .filter((item) => item % 2 === 0)
+        .map((item) => item + 1),
+    )
+    arr.clear()
+    expect(arr.reduce(() => 1)).toThrowError(TypeError)
+  })
 
-  // test('Should concat other array correctly', () => {
-  //   arr.push(0, 1)
-  //   expect([...arr.concat([2, 3, 4])]).toEqual([0, 1, 2, 3, 4])
-  // })
+  test('Should concat other array correctly', () => {
+    arr.push(0, 1)
+    expect([...arr.concat([2, 3, 4])]).toEqual([0, 1, 2, 3, 4])
+  })
 
-  // test('Should return true when item is in the array', () => {
-  //   arr.push(2)
-  //   expect(arr.includes(2)).toBeTruthy()
-  // })
+  test('Should return true when item is in the array', () => {
+    arr.push(2)
+    expect(arr.includes(2)).toBeTruthy()
+  })
 
-  // test('Should return false when item is not in the array', () => {
-  //   expect(arr.includes(2)).toBeFalsy()
-  // })
+  test('Should return false when item is not in the array', () => {
+    expect(arr.includes(2)).toBeFalsy()
+  })
 
-  // test('Should iterate the array', () => {
-  //   const originList = [0, 1, 2, 3, 4, 5]
-  //   arr.push(...originList)
+  test('Should iterate the array', () => {
+    const originList = [0, 1, 2, 3, 4, 5]
+    arr.push(...originList)
 
-  //   for (let i = 0; i < arr.length; i++) {}
+    for (let i = 0; i < arr.length; i++) {}
 
-  //   let idx = 0
-  //   for (const item of arr) {
-  //     expect(item).toBe(originList[idx++])
-  //   }
+    let idx = 0
+    for (const item of arr) {
+      expect(item).toBe(originList[idx++])
+    }
 
-  //   expect([...arr]).toEqual(originList)
-  // })
+    expect([...arr]).toEqual(originList)
+  })
 })

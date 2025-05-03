@@ -3,5 +3,8 @@
   "biome.enabled": true,
   "marscode.codeCompletionPro": {
     "enableCodeCompletionPro": false
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "biomejs.biome"
   }
 }

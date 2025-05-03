@@ -21,7 +21,7 @@ export class StaticArray<T> {
 
   set(index: number, value: T) {
     if (!this.checkIndexValid(index)) return
-    if (!this.list[index]) this.length++
+    if (this.list[index] === undefined) this.length++
     this.list[index] = value
   }
 
@@ -29,9 +29,7 @@ export class StaticArray<T> {
     const newStaticArray = new StaticArray<T>(this.capacity)
 
     for (let i = 0; i < this.length; i++) {
-      const newValue = deep
-        ? structuredClone(this.get(i) as T)
-        : (this.get(i) as T)
+      const newValue = deep ? structuredClone(this.get(i) as T) : (this.get(i) as T)
       newStaticArray.set(i, newValue)
     }
 
@@ -134,47 +132,26 @@ export class StaticArray<T> {
     }
   }
 
-  filter<S extends T>(
-    callback: (value: T, index: number, arr: this) => unknown,
-  ): StaticArray<S> {
+  filter<S extends T>(callback: (value: T, index: number, arr: this) => unknown): StaticArray<S> {
     const newStaticArray = new StaticArray<S>(this.capacity)
     for (let i = 0; i < this.length; i++) {
-      if (callback(this.list[i], i, this))
-        newStaticArray.push(this.list[i] as S)
+      if (callback(this.list[i], i, this)) newStaticArray.push(this.list[i] as S)
     }
 
     return newStaticArray
   }
 
+  reduce<U = T>(callback: (previousValud: U, currentValue: T, currentIndex: number, array: this) => U): U
   reduce<U = T>(
-    callback: (
-      previousValud: U,
-      currentValue: T,
-      currentIndex: number,
-      array: this,
-    ) => U,
-  ): U
-  reduce<U = T>(
-    callback: (
-      previousValud: U,
-      currentValue: T,
-      currentIndex: number,
-      array: this,
-    ) => U,
-    initialValue: U,
+    callback: (previousValud: U, currentValue: T, currentIndex: number, array: this) => U,
+    initialValue: U
   ): U
   reduce<U>(
-    callback: (
-      previousValue: U,
-      currentValue: T,
-      currentIndex: number,
-      array: this,
-    ) => U,
-    initialValue?: U,
+    callback: (previousValue: U, currentValue: T, currentIndex: number, array: this) => U,
+    initialValue?: U
   ): U | TypeError {
     const hasInitValue = typeof initialValue !== 'undefined'
-    if (!this.length && !hasInitValue)
-      return new TypeError('Reduce of empty StaticArray with no initial value')
+    if (!this.length && !hasInitValue) return new TypeError('Reduce of empty StaticArray with no initial value')
     let _initialValue = hasInitValue ? initialValue : (this.get(0) as U)
 
     for (let i = hasInitValue ? 0 : 1; i < this.length; i++) {
